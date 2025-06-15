@@ -1,0 +1,59 @@
+# pyproject.toml
+
+[project]
+# --- Project Metadata ---
+name = "Youtubot"
+version = "1.0.0"
+description = "A private, multilingual RAG assistant for YouTube videos using a local LLM."
+readme = "README.md"
+
+requires-python = "==3.11.*"
+
+# --- Project Dependencies ---
+# These are the libraries your application needs to run.
+
+dependencies = [
+    # Core Application Framework
+    "streamlit==1.35.0",
+
+    # LangChain Core & Integrations
+    "langchain==0.2.1",
+    "langchain-community==0.2.1",
+    
+    # Transcribe system
+    "ffmpeg-python", 
+    "openai-whisper",
+
+    # Vector Store
+    "faiss-cpu", 
+    
+    # For online Text-to-Speech
+    "gTTS",
+    
+    # For local, open-source embeddings
+    "sentence-transformers==2.7.0",
+
+    # Web & API Services
+    "requests==2.32.3",
+    "duckduckgo-search==5.3.1",
+    
+    # Robust YouTube Data Fetching
+    "yt-dlp==2024.5.27",
+    "youtube-transcript-api",
+
+    # Configuration & Utilities
+    "pyyaml==6.0.1",
+    "python-dotenv==1.0.1",
+    "langdetect==1.0.9",
+    "tiktoken==0.7.0",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cuda"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cuda" }]
+torchvision = [{ index = "pytorch-cuda" }]
+torchaudio = [{ index = "pytorch-cuda" }]

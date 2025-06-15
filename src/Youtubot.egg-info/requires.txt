@@ -1,0 +1,15 @@
+streamlit==1.35.0
+langchain==0.2.1
+langchain-community==0.2.1
+langchain-openai==0.1.7
+faiss-cpu==1.8.0
+gTTS
+sentence-transformers==2.7.0
+requests==2.32.3
+duckduckgo-search==5.3.1
+yt-dlp==2024.5.27
+pydub==0.25.1
+pyyaml==6.0.1
+python-dotenv==1.0.1
+langdetect==1.0.9
+tiktoken==0.7.0

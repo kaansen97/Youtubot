@@ -1,0 +1,97 @@
+# config/prompts.yaml (Upgraded with French)
+
+# Main prompt for generating answers from YouTube video context.
+rag_prompt:
+  tr: |
+    Aşağıdaki video içeriklerini kullanarak kullanıcının sorusunu yanıtla:
+    BAĞLAM: {context}
+    SORU: {question}
+    YANIT KURALLARI:
+    1. Video içeriklerine dayanarak detaylı yanıt ver.
+    2. Türkçe ve anlaşılır bir dille yanıt ver.
+    3. Soruya tam yanıt veremiyorsan, bu durumu açıkla.
+    YANIT:
+  en: |
+    Answer the user's question using the following video content:
+    CONTEXT: {context}
+    QUESTION: {question}
+    ANSWERING RULES:
+    1. Provide a detailed answer based on the video content.
+    2. Respond in clear and understandable English.
+    3. If you cannot fully answer the question, state that clearly.
+    ANSWER:
+  es: |
+    Responde a la pregunta del usuario utilizando el siguiente contenido de video:
+    CONTEXTO: {context}
+    PREGUNTA: {question}
+    REGLAS DE RESPUESTA:
+    1. Proporciona una respuesta detallada basada en el contenido del video.
+    2. Responde en un español claro y comprensible.
+    3. Si no puedes responder completamente a la pregunta, indícalo claramente.
+    RESPUESTA:
+  fr: |
+    Répondez à la question de l'utilisateur en utilisant le contenu vidéo suivant :
+    CONTEXTE: {context}
+    QUESTION: {question}
+    RÈGLES DE RÉPONSE :
+    1. Fournissez une réponse détaillée basée sur le contenu de la vidéo.
+    2. Répondez dans un français clair et compréhensible.
+    3. Si vous ne pouvez pas répondre entièrement à la question, indiquez-le clairement.
+    RÉPONSE :
+  ge: |
+    Beantworten Sie die Frage des Benutzers unter Verwendung des folgenden Videoinhalts:
+    KONTEXT: {context}
+    FRAGE: {question}
+    ANTWORTREGELN:
+    1. Geben Sie eine detaillierte Antwort basierend auf dem Videoinhalt.
+    2. Antworten Sie in klarem und verständlichem Deutsch.
+    3. Wenn Sie die Frage nicht vollständig beantworten können, geben Sie dies klar an.
+    ANTWORT:
+
+# Prompt for the web search fallback mechanism.
+web_qa_prompt:
+  tr: |
+    Aşağıdaki web arama özetini kullanarak kullanıcının sorusunu yanıtla:
+    WEB ÖZETİ: {context}
+    SORU: {question}
+    YANIT:
+  en: |
+    Answer the user's question using the following web search snippet:
+    WEB SNIPPET: {context}
+    QUESTION: {question}
+    ANSWER:
+  es: |
+    Responde a la pregunta del usuario utilizando el siguiente fragmento de búsqueda web:
+    FRAGMENTO WEB: {context}
+    PREGUNTA: {question}
+    RESPUESTA:
+  fr: |
+    Répondez à la question de l'utilisateur en utilisant l'extrait de recherche web suivant :
+    EXTRAIT WEB: {context}
+    QUESTION: {question}
+    RÉPONSE :
+  ge: |
+    Verwenden Sie den folgenden Web-Suchausschnitt, um die Frage des Benutzers zu beantworten:
+    WEB-AUSSCHNITT: {context}
+    FRAGE: {question}
+    ANTWORT:
+
+# Hardcoded response for when no information is found anywhere.
+no_context_prompt:
+  tr: "Bu soruya yanıt verebilmek için hem video arşivimde hem de web'de yeterli bilgi bulunamadı."
+  en: "Sufficient information to answer this question could not be found in the video archive or on the web."
+  es: "No se pudo encontrar suficiente información para responder a esta pregunta ni en el archivo de video ni en la web."
+  fr: "Les informations pour répondre à cette question n'ont pu être trouvées ni dans l'archive vidéo ni sur le web."
+  ge: "Es konnten keine ausreichenden Informationen gefunden werden, um diese Frage zu beantworten, weder im Videoarchiv noch im Web."
+
+# Evaluation prompt for the LLM to rate its own confidence.
+evaluation_prompt: |
+  Evaluate if the 'Response' is a helpful and direct answer to the 'Query'.
+  Query: {query}
+  Response: {response}
+  RULES:
+  - If the Response says it cannot find an answer, is irrelevant, or evasive, the score is 0.0.
+  - If the Response directly and accurately answers the Query, the score is 1.0.
+  - If the Response is partially helpful but incomplete, score between 0.3 and 0.7.
+  Provide a single floating-point number from 0.0 to 1.0, and nothing else.
+  SCORE:

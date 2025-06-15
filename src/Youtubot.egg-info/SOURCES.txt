@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+src/Youtubot.egg-info/PKG-INFO
+src/Youtubot.egg-info/SOURCES.txt
+src/Youtubot.egg-info/dependency_links.txt
+src/Youtubot.egg-info/requires.txt
+src/Youtubot.egg-info/top_level.txt
+src/core/config.py
+src/core/models.py

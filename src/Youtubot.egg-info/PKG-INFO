@@ -1,0 +1,265 @@
+Metadata-Version: 2.4
+Name: Youtubot
+Version: 1.0.0
+Summary: A private, multilingual RAG assistant for YouTube videos using a local LLM.
+Requires-Python: ==3.11.*
+Description-Content-Type: text/markdown
+Requires-Dist: streamlit==1.35.0
+Requires-Dist: langchain==0.2.1
+Requires-Dist: langchain-community==0.2.1
+Requires-Dist: langchain-openai==0.1.7
+Requires-Dist: faiss-cpu==1.8.0
+Requires-Dist: gTTS
+Requires-Dist: sentence-transformers==2.7.0
+Requires-Dist: requests==2.32.3
+Requires-Dist: duckduckgo-search==5.3.1
+Requires-Dist: yt-dlp==2024.5.27
+Requires-Dist: pydub==0.25.1
+Requires-Dist: pyyaml==6.0.1
+Requires-Dist: python-dotenv==1.0.1
+Requires-Dist: langdetect==1.0.9
+Requires-Dist: tiktoken==0.7.0
+
+
+# Youtubot: A Private, Local, & Multilingual YouTube AI Assistant
+
+<p align="center">
+  <!-- Placeholder for your hero image -->
+  <img src="images/placeholder_demo.png" width="800" alt="Youtubot Interface">
+</p>
+
+A private, 100% free, multilingual AI assistant that provides intelligent responses using YouTube video content. This version runs entirely on your local machine, ensuring complete privacy with no reliance on paid APIs.
+
+Built with a modern, on-demand RAG (Retrieval-Augmented Generation) architecture, it leverages open-source models for language understanding, response generation, and text-to-speech.
+
+## Key Features
+
+### 🚀 100% Local & Private
+- **Zero API Keys Needed**: The entire pipeline runs without requiring any paid services from OpenAI, Google, or ElevenLabs.
+- **Complete Privacy**: Your data, video transcripts, and queries never leave your local machine.
+- **Offline Capable**: Once models are downloaded, the core application can run without an internet connection.
+
+### 🧠 Advanced RAG System
+- **Dynamic Content Ingestion**: Provide any public YouTube URL and start asking questions in seconds.
+- **Intelligent Local Retrieval**: Performs semantic search using a state-of-the-art multilingual embedding model running locally.
+- **Confidence-Based Fallback**: The local LLM evaluates its own answer quality and can automatically fall back to a real-time web search if the video content is insufficient.
+- **Source Attribution**: Every response from a video includes metadata about the source.
+
+### 🌎 Multilingual by Design
+- **Universal Language Support**: Ask questions in dozens of languages (English, Spanish, French, German, Turkish, etc.). The system automatically detects the query language.
+- **Language-Specific Responses**: The AI assistant will always answer in the same language you asked the question in.
+- **Multilingual TTS**: Voice responses are generated using language-specific, high-quality local models.
+
+### 🔊 High-Quality Local Text-to-Speech
+- **Natural Voice Synthesis**: Integrates **Coqui TTS**, a leading open-source engine, to generate clear and natural-sounding speech.
+- **One-click Audio**: Generate and play audio for any response with a single button press.
+- **Efficient & On-Demand**: TTS models are loaded as needed and cached for performance.
+
+## Architecture
+
+Our architecture is designed for speed, privacy, and flexibility, running powerful open-source models on your local machine.
+
+```mermaid
+graph TD
+    subgraph User Interaction
+        A[User provides YouTube URL] --> B{Streamlit UI};
+        B -- User Query --> C{RAG Service};
+    end
+
+    subgraph RAG Core
+        C -- 1. Get Transcript --> D[langchain:YoutubeLoader];
+        D -- Transcript Chunks --> E[memory:FAISS Vector Store];
+        C -- 2. Create Embeddings --> F[local:SentenceTransformer];
+        F --> E;
+        C -- 3. Similarity Search --> E;
+        E -- Relevant Chunks --> C;
+        C -- 4. Generate Answer --> G[local:Ollama (Llama 3)];
+    end
+
+    subgraph Confidence Fallback
+        G -- Answer --> C;
+        C -- 5. Self-Correction --> G;
+        G -- Confidence Score --> C;
+        C -- 6. Is score > 0.5? --> H{Decision};
+        H -- Yes --> I[Show Video Answer];
+        H -- No --> J[Web Search Fallback];
+        J --> K[DuckDuckGo Search];
+        K -- Snippet --> G;
+        G -- New Answer --> L[Show Web Answer];
+    end
+
+    subgraph Output
+        I --> M{Response};
+        L --> M;
+        M -- Text & Language Code --> N[local:Coqui TTS];
+        N -- Audio --> B;
+    end
+```
+
+## Project Structure
+
+This project follows a clean and modern structure, with all core logic abstracted into services.
+
+```
+youtubot/
+├── app.py                           # Main Streamlit UI
+├── pyproject.toml                   # Python dependencies for uv
+├── .env.template                    # Environment variables template (now empty)
+├── Dockerfile                       # Container configuration for the app
+├── docker-compose.yml               # Orchestrates the app and Ollama services
+├── .gitignore                       # Standard git ignore file
+├── config/
+│   ├── settings.yaml              # Application configuration
+│   └── prompts.yaml               # LLM prompt templates
+├── src/
+│   ├── core/
+│   │   ├── config.py              # Configuration management
+│   │   └── models.py              # Data models and types
+│   └── services/
+│       ├── rag_service.py         # The core RAG implementation
+│       ├── tts_service.py         # Local Text-to-Speech service
+│       └── web_search_service.py  # Web search fallback service
+└── images/                          # Screenshots and assets
+```
+
+## Technology Stack
+
+### Core Technologies
+- **Python 3.9+**: Main programming language.
+- **Streamlit**: Interactive web application framework.
+- **uv**: High-speed Python package installer and virtual environment manager.
+- **Ollama**: Runs powerful large language models like Llama 3 locally.
+- **LangChain**: The core framework for orchestrating the RAG pipeline.
+- **FAISS**: Ultra-fast, in-memory vector store for semantic search.
+- **Docker & Docker Compose**: For robust, containerized deployment.
+
+### AI & ML (100% Local)
+- **Sentence Transformers**: State-of-the-art multilingual embedding models for text understanding.
+- **Coqui TTS**: High-quality, local, and multilingual text-to-speech engine.
+
+### Data Processing & Tools
+- **yt-dlp & pydub**: The power behind `YoutubeLoader` for fetching transcripts and video info.
+- **PyYAML**: For managing configuration in `settings.yaml` and `prompts.yaml`.
+- **langdetect**: For robust language detection of user queries.
+
+---
+
+## 🚀 Getting Started
+
+There are two ways to run Youtubot: **Locally** (recommended for development) or with **Docker** (recommended for stable deployment).
+
+### Method 1: Running Locally (Recommended for First-Time Use)
+
+#### 1. System Prerequisites (Crucial First Step!)
+- **Install Ollama**: Go to [ollama.com](https://ollama.com/) and download/install the application. Ensure it is running in the background.
+- **Download LLM Model**: Open your terminal and run:
+  ```bash
+  ollama pull llama3
+  ```
+- **Install FFmpeg**: This is an audio processing dependency.
+  - **macOS (Homebrew):** `brew install ffmpeg`
+  - **Ubuntu/Debian:** `sudo apt update && sudo apt install ffmpeg`
+  - **Windows:** Download from the [FFmpeg website](https://ffmpeg.org/download.html) and add the `bin` directory to your system's PATH.
+
+#### 2. Clone the Repository
+```bash
+git clone https://github.com/your-username/youtubot.git
+cd youtubot
+```
+
+#### 3. Set Up the Environment with `uv`
+```bash
+# Install uv if you don't have it
+pip install uv
+
+# 1. Create a virtual environment
+uv venv
+
+# 2. Activate the environment
+# On macOS/Linux:
+source .venv/bin/activate
+# On Windows:
+.venv\Scripts\activate
+
+# 3. Install Depencencies
+#On Windows:
+uv pip install
+
+```
+This will install all Python libraries. On first run, it will also download the necessary TTS voice models, which may take some time.
+
+#### 4. Run the Application
+Ensure the Ollama application is still running. Then, start the Streamlit app:
+```bash
+streamlit run app.py
+```
+Youtubot will be available at `http://localhost:8501`.
+
+### Method 2: Running with Docker (Recommended for Deployment)
+
+This method uses Docker Compose to automatically build and run both the Youtubot application and the Ollama model server.
+
+#### 1. System Prerequisites
+- **Install Docker and Docker Compose**: Follow the official instructions on the [Docker website](https://www.docker.com/products/docker-desktop/).
+- **(Optional) For GPU Acceleration**: Install the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) to allow Docker to use your GPU, which will significantly speed up the LLM.
+
+#### 2. Run with Docker Compose
+Navigate to the project's root directory in your terminal and run a single command:
+```bash
+docker-compose up --build -d
+```
+- `docker-compose up`: Starts the services defined in `docker-compose.yml`.
+- `--build`: Builds the Youtubot image from the `Dockerfile` before starting.
+- `-d`: Runs the containers in detached mode (in the background).
+
+This command will:
+1.  Pull the official Ollama image.
+2.  Build your Youtubot application image.
+3.  Start both containers, networked together.
+4.  Inside the Ollama container, it will automatically pull the `llama3` model if it doesn't already exist in its volume.
+
+Youtubot will be available at `http://localhost:8501`. To stop the services, run `docker-compose down`.
+
+## Configuration
+
+This project is designed to work out-of-the-box with zero configuration, but you can customize it via the `config/` files.
+
+### Environment Variables
+This project requires **no API keys**. The `.env` file is not needed.
+
+### Main Settings (`config/settings.yaml`)
+You can change the models used by the application here.
+```yaml
+# AI and Embedding models
+llm_model_name: "llama3"
+embedding_model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+
+# RAG retrieval settings
+retrieval_k: 4
+
+# Language to Coqui TTS model mapping
+coqui_voice_map:
+  en: "tts_models/en/ljspeech/vits"
+  es: "tts_models/es/mai/vits"
+  fr: "tts_models/fr/mai/vits"
+  de: "tts_models/de/thorsten-deepmind/vits"
+  tr: "tts_models/tr/common-voice/vits"
+```
+
+## License
+
+This project is licensed under the MIT License - see the `LICENSE` file for details.
+
+## Acknowledgments
+This project stands on the shoulders of giants in the open-source community.
+- **Ollama**: For making it incredibly simple to run powerful LLMs locally.
+- **Meta AI**: For the open-source Llama 3 model.
+- **Coqui TTS**: For providing high-quality, open-source, multilingual voice synthesis.
+- **Sentence Transformers**: For leading the way in open-source embedding models.
+- **LangChain & Streamlit**: For the powerful frameworks that make building AI apps accessible.
+
+## Support
+For issues, questions, or contributions:
+- **Bug Reports**: Please open an issue on this repository's GitHub page.
+- **Feature Requests**: Please start a discussion on the GitHub page.
+- **Contact**: `your-contact-email@example.com`

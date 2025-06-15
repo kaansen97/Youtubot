@@ -1,0 +1,12 @@
+# config/settings.yaml
+
+# AI and Embedding models
+llm_model_name: "llama3"
+embedding_model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+
+# Vector Database and Retrieval settings
+retrieval_k: 4
+
+# File paths
+data_dir: "data"
+vector_db_path: "data/vector_db_cache"
